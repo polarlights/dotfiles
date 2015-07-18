@@ -1,0 +1,173 @@
+# set your user tokens as environment variables, such as ~/.secrets
+# See the README for examples.
+[color]
+  ui = true
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red
+  new = green
+[alias]
+  # add
+  a = add                           # add
+  chunkyadd = add --patch           # stage commits chunk by chunk
+
+  # via http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/
+  snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+  snapshots = !git stash list --grep snapshot
+
+  #via http://stackoverflow.com/questions/5188320/how-can-i-get-a-list-of-git-branches-ordered-by-most-recent-commit
+  recent-branches = !git for-each-ref --count=15 --sort=-committerdate refs/heads/ --format='%(refname:short)'
+
+  # branch
+  b = branch -v                     # branch (verbose)
+  br = branch
+
+  # commit
+  c = commit -m                     # commit with message
+  ca = commit -am                   # commit all with message
+  ct = commit                       # commit
+  amend = commit --amend            # ammend your last commit
+  ammend = commit --amend           # ammend your last commit
+
+  # checkout
+  co = checkout                     # checkout
+  nb = checkout -b                  # create and switch to a new branch (mnemonic: "git new branch branchname...")
+
+  # cherry-pick
+  cp = cherry-pick -x               # grab a change from a branch
+
+  # diff
+  id = icdiff
+  d = diff                          # diff unstaged changes
+  dc = diff --cached                # diff staged changes
+  last = diff HEAD^                 # diff last committed change
+
+  # log
+  l = log --graph --date=short
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+  changes = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\" --name-status
+  short = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
+  simple = log --pretty=format:\" * %s\"
+  shortnocolor = log --pretty=format:\"%h %cr %cn %s\"
+
+  # pull
+  pl  = pull                        # pull
+  plr = pull --rebase               # pull with rebase
+
+  # push
+  ps = push                         # push
+
+  # rebase
+  rc = rebase --continue            # continue rebase
+  rs = rebase --skip                # skip rebase
+  ra = rebase --abort                # abort rebase
+  
+  # merge
+  ra = merge --abort                # abort rebase
+
+  # remote
+  r = remote -v                     # show remotes (verbose)
+
+  # reset
+  unstage = reset HEAD              # remove files from index (tracking)
+  uncommit = reset --soft HEAD^     # go back before last commit, with files in uncommitted state
+  filelog = log -u                  # show changes to a file
+  mt = mergetool                    # fire up the merge tool
+
+  # stash
+  ss = stash                        # stash changes
+  sl = stash list                   # list stashes
+  sa = stash apply                  # apply stash (restore changes)
+  sd = stash drop                   # drop stashes (destory changes)
+
+  # status
+  st = status                       # status
+
+  # tag
+  t = tag -n                        # show tags with <n> lines of each tag message
+
+  # svn helpers
+  svnr = svn rebase
+  svnd = svn dcommit
+  svnl = svn log --oneline --show-commit
+
+  #period
+  ld = log -p --since="1am"
+  l1 = log -p --since=1.day.ago
+  l2 = log -p --since=2.days.ago
+  l3 = log -p --since=3.days.ago
+  l4 = log -p --since=4.days.ago
+  l5 = log -p --since=5.days.ago
+  l6 = log -p --since=6.days.ago
+  lw = log -p --since=1.week.ago
+  l2w = log -p --since=2.weeks.ago
+  l3w = log -p --since=3.weeks.ago
+  lm = log -p --since=1.month.ago
+  wd = whatchanged --since="1am"
+  w1 = whatchanged --since=1.day.ago
+  w2 = whatchanged --since=2.days.ago
+  w3 = whatchanged --since=3.days.ago
+  w4 = whatchanged --since=4.days.ago
+  w5 = whatchanged --since=5.days.ago
+  w6 = whatchanged --since=6.days.ago
+  ww = whatchanged --since=1.week.ago
+  w2w = whatchanged --since=2.weeks.ago
+  w3w = whatchanged --since=3.weeks.ago
+  wm = whatchanged --since=1.month.ago
+  dd = diff --ignore-space-change 'HEAD@{1am}' HEAD
+  d1 = diff --ignore-space-change 'HEAD@{1.day.ago}' HEAD
+  d2 = diff --ignore-space-change 'HEAD@{2.days.ago}' HEAD
+  d3 = diff --ignore-space-change 'HEAD@{3.days.ago}' HEAD
+  d4 = diff --ignore-space-change 'HEAD@{4.days.ago}' HEAD
+  d5 = diff --ignore-space-change 'HEAD@{5.days.ago}' HEAD
+  d6 = diff --ignore-space-change 'HEAD@{6.days.ago}' HEAD
+  dw = diff --ignore-space-change 'HEAD@{1.week.ago}' HEAD
+  d2w = diff --ignore-space-change 'HEAD@{2.weeks.ago}' HEAD
+  d3w = diff --ignore-space-change 'HEAD@{3.weeks.ago}' HEAD
+  dm = diff --ignore-space-change 'HEAD@{1.month.ago}' HEAD
+[format]
+  pretty = format:%C(blue)%ad%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
+[mergetool]
+  prompt = false
+[mergetool "mvimdiff"]
+  cmd="mvim -c 'Gdiff' $MERGED"     # use fugitive.vim for 3-way merge
+  keepbackup=false
+[merge]
+  summary = true
+  verbosity = 1
+  tool = vimdiff
+[apply]
+  whitespace = nowarn
+[branch]
+  autosetupmerge = true
+[push]
+  # 'git push' will push the current branch to its tracking branch
+  # the usual default is to push all branches
+  default = upstream
+[core]
+  autocrlf = false
+  editor = vim
+  excludesfile = ~/.gitignore
+	whitespace = cr-at-eol
+[advice]
+  statusHints = false
+[diff]
+  # Git diff will use (i)ndex, (w)ork tree, (c)ommit and (o)bject
+  # instead of a/b/c/d as prefixes for patches
+  mnemonicprefix = true
+	algorithm = patience
+	noprefix = true
+[rerere]
+  # Remember my merges
+  # http://gitfu.wordpress.com/2008/04/20/git-rerere-rereremember-what-you-did-last-time/
+  enabled = true
+[include]
+  path = .gitconfig.user
+[user]
+	email = =
+	name = =

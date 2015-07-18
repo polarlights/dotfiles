@@ -1,0 +1,242 @@
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+"Setup Plugin Support{
+set rtp+=~/.dotfiles/vim/bundle/Vundle.vim/
+call vundle#begin()
+"}
+
+" ================================= Plugins ==================================
+"Core
+Plugin 'gmarik/Vundle.vim'
+
+"Color
+Plugin 'altercation/vim-colors-solarized'
+
+"Lang
+Plugin 'tpope/vim-markdown'
+Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-surround'
+Plugin 'kien/ctrlp.vim'
+Plugin 'mattn/emmet-vim'
+Plugin 'Lokaltog/vim-easymotion'
+Plugin 'rking/ag.vim'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+Plugin 'tpope/vim-endwise'
+Plugin 'vim-scripts/AutoComplPop'
+Plugin 'pangloss/vim-javascript'
+Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/syntastic'
+Plugin 'vim-scripts/bufexplorer.zip'
+Plugin 'ap/vim-css-color'
+Plugin 'vim-scripts/jsbeautify'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'kchmck/vim-coffee-script'
+"}
+
+"Vim powerline
+Plugin 'bling/vim-airline'
+
+call vundle#end()  "required
+
+
+" ================================= Vim Configration ==================================
+"set dictionary+=/usr/local/share/dict/words
+set backspace=indent,eol,start  " backspace for dummies
+set linespace=0                 " No extra spaces between rows
+set number                          " Line numbers on
+set showmatch                   " show matching brackets/parenthesis
+set incsearch                   " find as you type search
+set hlsearch                    " highlight search terms
+set winminheight=0              " windows can be 0 line high
+set ignorecase                  " case insensitive search
+set smartcase                   " case sensitive when uc present
+set wildmenu                    " show list instead of just completing
+set wildmode=list:longest,full  " command <Tab> completion, list matches, then longest common part, then all.
+set whichwrap=b,s,h,l,<,>,[,]   " backspace and cursor keys wrap to
+set scrolljump=5                " lines to scroll when cursor leaves screen
+set scrolloff=3                 " minimum lines to keep above and below cursor
+set foldmethod=manual           "set manual fold
+set nobackup                    "don't create backup file
+set noswapfile                  "set no swap file
+set fileformat=unix             "set file format
+set shortmess=atI               "set don't show the hint at startup
+set list
+set listchars=tab:,.,trail:.,extends:#,nbsp:. " Highlight problematic whitespace
+set visualbell                   "no sounds
+set autoread                     "reload files changed outside
+set showmode                     "display the current mode
+set cursorline                   "highlight current line
+set hidden                       "buffers can exist in the background
+set nowrap                      " do not wrap long lines
+set linebreak                   "wrap lines at convenient points
+set autoindent                  " indent at the same level of the previous line
+set smartindent
+set shiftwidth=2                " use indents of 2 spaces
+set expandtab                   " tabs are spaces, not tabs
+set tabstop=2                   " an indentation every four columns
+set softtabstop=2               " let backspace delete indent
+set wildignore+=*/tmp/*,*.so*,*.swp,*.zip,._*,*DS_Store*,log/**,*.png,*.jpg,*.gif "MacOSX or Linux
+syntax on                       "syntax highlighting
+"set matchpairs+=<:>                " match, to be used with %
+
+filetype plugin indent on       "Automatically detect file types
+set mouse=a                     "enable mouse usage
+scriptencoding utf-8
+set shortmess+=filmnrxoOtT      "abbrev. of messages (avoids 'hit enter')
+set viewoptions=folds,options,cursor,unix,slash " better unix / windows compatibility
+set virtualedit=onemore         "allow for cursor beyond last character
+if has('gui_running')
+  set guioptions-=T             " remove the toolbar
+  set lines=40                  " 40 lines of text instead of 24,
+  set guifont=Monaco:h14,Courier\ New\ Regular:h16
+  if has('gui_macvim')
+    set transparency=5          " Make the window slightly transparent
+  endif
+endif
+
+set tags+=tags             "set tags
+set tags+=~/.rvm/gems/tags
+
+" ================================= Vim Theme ==================================
+syntax enable                   "syntax highlighting
+set background=dark             "Color theme
+colorscheme solarized           "railscasts solarized
+
+" ================================= Status Line ==================================
+if has('cmdline_info')
+  set ruler                   " show the ruler
+  set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
+  set showcmd                 " show partial commands in status line and
+endif
+
+if has('statusline')
+  set laststatus=2
+
+  " Broken down into easily includeable segments
+  set statusline=%<%f\    " Filename
+  set statusline+=%w%h%m%r " Options
+  set statusline+=%{fugitive#statusline()} "  Git Hotness
+  set statusline+=\ [%{&ff}/%Y]            " filetype
+  set statusline+=\ [%{getcwd()}]          " current dir
+  set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
+endif
+
+set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
+" }
+
+" ================================= Key Mappings ==================================
+"The default leader is '\', but many people prefer ',' as it's in a standard location
+let mapleader = ','
+" ctrl + a
+noremap <C-A> ggVG
+inoremap <C-A> <C-O>ggVG
+" ctrl + s
+imap <C-s> <esc>:w<CR>:echo expand("%f") . " saved."<CR>
+vmap <C-s> <esc>:w<CR>:echo expand("%f") . " saved."<CR>
+nmap <C-s> :w<CR>:echo expand("%f") . " saved."<CR>
+" Making it so ; works like : for commands. Saves typing and eliminates :W style typos due to lazy holding shift.
+nnoremap ; :
+set clipboard=unnamed
+" Easier moving in tabs and windows
+map <C-H> <C-W>h<C-W>
+map <C-J> <C-W>j<C-W>_
+map <C-K> <C-W>k<C-W>_
+map <C-L> <C-W>l<C-W>
+
+map <Leader>rt :!ctags --extra=+f  --exclude=.git --exclude=log -R * `pwd`/*<CR><CR>
+imap jj <Esc>           "set ESC map
+
+autocmd FileType html,css,eruby EmmetInstall
+autocmd FileType c,cpp,java,php,js,python,twig,xml,yml autocmd BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
+autocmd BufNewFile,BufRead *.scss set ft=css
+autocmd BufRead,BufNewFile *.js set syntax=jquery
+
+
+" ================================= Plugins Configration ==================================
+" ********************************* Ctrlp ********************************
+let g:ctrlp_map = '<C-p>'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_root_markers = ['.git','Gemfile','.vimrc','.bashrc', '.zshrc']
+nnoremap <silent> <D-t> :CtrlP<CR>
+nnoremap <silent> <D-r> :CtrlPMRU<CR>
+let g:ctrlp_custom_ignore = {
+      \'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components)$',
+      \'file': '\v\.(exe|so|dll)$'
+      \ }
+
+
+" ********************************* Fugitive ********************************
+nnoremap <silent> <leader>gs :Gstatus<CR>
+nnoremap <silent> <leader>gd :Gdiff<CR>
+nnoremap <silent> <leader>gc :Gcommit<CR>
+nnoremap <silent> <leader>gb :Gblame<CR>
+nnoremap <silent> <leader>gl :Glog<CR>
+nnoremap <silent> <leader>gp :Git push<CR>
+
+
+" ********************************* Nerd Commenter ********************************
+let NERDSpaceDelims = 1
+map <D-/> <Plug>NERDCommenterToggle
+imap <D-/> <C-O><Plug>NERDCommenterToggle
+
+
+" ********************************* Emmet ********************************
+let g:user_emmet_expandabbr_key = '<leader>e'
+let g:user_emmet_mode='a'
+let g:user_emmet_install_global = 0
+
+
+" ********************************* NerdTree ********************************
+nnoremap <leader>t :NERDTreeToggle<cr>
+autocmd vimenter * if !argc() | NERDTree | endif "Open nerdtree when no files specific"
+let NERDTreeChDirMode = 2
+let NERDTreeIgnore=['\.vim$', '\~$', '\.git', '.jpg', '.png', '.gif', 'node_modules$', 'bower_components$']
+let g:nerdtree_tabs_open_on_gui_startup = 0
+let NERDTreeWinSize = 30
+let NERDTreeQuitOnOpen = 1
+
+"snipMat
+let g:snipMate = {}
+let g:snipMate.scope_aliases = {}
+let g:snipMate.scope_aliases['ruby'] = 'ruby, rails'
+
+" *********************************** EasyMotion *******************************
+let g:EasyMotion_use_upper = 1 " Use uppercase target labels and type as a lower case
+let g:EasyMotion_smartcase = 1 " type `l` and match `l`&`L`
+let g:EasyMotion_use_smartsign_us = 1 " Smartsign (type `3` and match `3`&`#`)
+map / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+nmap s <Plug>(easymotion-s)
+map <Leader>l <Plug>(easymotion-lineforward)
+map <leader>j <Plug>(easymotion-j)
+map <leader>k <Plug>(easymotion-k)
+map <Leader>h <Plug>(easymotion-linebackward)
+map <leader>j <Plug>(easymotion-j)
+" JK motions: Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+
+" *********************************** Syntastic *******************************
+
+
+" *********************************** Ultisnips *******************************
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+" *********************************** Javascript-vim *******************************
+let g:javascript_enable_domhtmlcss = 1
+
+" *********************************** AutoComplPop *******************************
+let g:acp_enableAtStartup = 1
+let g:acp_mappingDriven = 0
+
