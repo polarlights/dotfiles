@@ -1,6 +1,7 @@
 " Use Vim settings, rather then Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 set nocompatible
+filetype off
 
 "Setup Plugin Support{
 set rtp+=~/.dotfiles/vim/bundle/Vundle.vim/
@@ -9,7 +10,7 @@ call vundle#begin()
 
 " ================================= Plugins ==================================
 "Core
-Plugin 'gmarik/Vundle.vim'
+Plugin 'VundleVim/Vundle.vim'
 
 "Color
 Plugin 'altercation/vim-colors-solarized'
@@ -27,6 +28,7 @@ Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'tpope/vim-endwise'
+Plugin 'tmhedberg/matchit'
 Plugin 'vim-scripts/AutoComplPop'
 Plugin 'pangloss/vim-javascript'
 Plugin 'scrooloose/nerdtree'
@@ -37,6 +39,7 @@ Plugin 'ap/vim-css-color'
 Plugin 'vim-scripts/jsbeautify'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'kchmck/vim-coffee-script'
+Plugin 'suan/vim-instant-markdown'
 "}
 
 "Vim powerline
@@ -240,3 +243,8 @@ let g:javascript_enable_domhtmlcss = 1
 let g:acp_enableAtStartup = 1
 let g:acp_mappingDriven = 0
 
+" *********************************** Vim Instant Markdown *******************************
+let g:instant_markdown_slow = 1
+let g:instant_markdown_autostart = 0
+map <Leader>m :InstantMarkdownPreview<CR>
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
