@@ -1,0 +1,17 @@
+# Rime dictionary
+# encoding: utf-8
+#
+# 中英文混输的时候有用
+
+---
+name: chinese_contain_english
+version: "0.1"
+sort: by_weight
+use_preset_vocabulary: false
+...
+
+ Rime 	rime
+ Android 	android
+ Apple 	apple
+ Mac 	mac
+ Windows 	windows

@@ -1,0 +1,37 @@
+#default.custom.yaml
+patch:
+  menu/page_size: 9  #设置候选字数量，根据喜好调整。
+  schema_list:           #“输入选单”中激活的输入方案定义。
+     #    - schema: double_pinyin_flypy
+     #   - schema: terra_pinyin
+     #    - schema: luna_pinyin
+     #   - schema: emoji
+     #    - schema: luna_pinyin_fluency
+     #   - schema: double_pinyin_mspy
+         - schema: luna_pinyin_simp
+     #   - schema: bopomofo
+#下面定义中英文切换的方式
+  ascii_composer/good_old_caps_lock:  true
+  ascii_composer/switch_key:
+    Caps_Lock: noop
+    Control_L: noop
+    Control_R: noop
+    Eisu_toggle: clear
+    Shift_L: commit_text
+    Shift_R: inline_ascii
+
+#下面定义“输入选单”的切换控制
+  switcher:
+    abbreviate_options: true
+    caption: "〔切换〕"          #把默认的“方案選單”修改为了“切换”。
+    fold_options: true
+    hotkeys:
+      - "Control+grave"       #默认方案
+      - "Control+Shift+grave"   #默认方案
+      - "Control+s"             #新增方案
+    option_list_separator: "／"   #以下都为默认custom.yaml文件的默认配置，copy过来就可以。
+    save_options:
+      - full_shape
+      - ascii_punct
+      - simplification
+      - extended_charset

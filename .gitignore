@@ -1,1 +1,3 @@
 vim/bundle/*
+Rime/*.bin
+Rime/*\.user\.db/*

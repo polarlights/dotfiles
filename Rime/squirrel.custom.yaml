@@ -1,0 +1,37 @@
+# squirrel.custom.yaml
+patch: 
+  # us_keyboard_layout: true         # 键盘选项：应用美式键盘布局
+  # show_notifications_when: growl_is_running  # 狀態通知，默認裝有Growl時顯示，也可設爲全開（always）全關（never）
+  style/color_scheme: polarlights         # 选择配色方案
+  style/horizontal: true           # 候选窗横向显示
+  # style/inline_preedit: false   # 关闭内嵌编码，这样就可以显示首行的拼音（MAC下不建议开启）
+  style/corner_radius: 3           # 窗口圆角半径
+  style/border_height: 4           # 窗口边界高度，大于圆角半径才有效果
+  tyle/border_width: 4             # 窗口边界宽度，大于圆角半径才有效果
+  # style/line_spacing: 1         # 候选词的行间距
+  # style/spacing: 5              # 在非内嵌编码模式下，预编辑和候选词之间的间距
+  style/font_face: "Lantinghei TC Extralight"  # 预选栏文字字体，使用中文字体：兰亭黑-纤黑
+  style/font_point: 17             #预选栏文字字号
+  style/label_font_face: "Myriad Pro Light"  # 预选栏编号字体，使用西文字体：Myriad Pro Light
+  style/label_font_point: 17       #预选栏编号字号
+ #上述是候选栏的基本设置，确定了文字的大小和候选栏的外观样式。
+ #下面是“demo”样式文件的配置，主要确定候选栏颜色配置。
+  preset_color_schemes:
+    polarlights:        #样式名称，就是上述“style/color_scheme: demo”
+      author: "Polarlights<godhuyang@hotmail.com>"        #作者
+      name: "Polarlights"                      #作者名字
+      horizontal: true  # 水平排列
+      inline_preedit: true #单行显示，false双行显示
+      candidate_format: "%c\u2005%@\u2005"  # 编号 %c 和候选词 %@ 前后的空间
+      corner_radius: 5  #候选条圆角
+      border_height: 0 
+      border_width: 0
+      back_color: 0xFFFFFF  #候选条背景色
+      font_face: "PingFang SC,H-SiuNiu"  #候选词字体
+      font_point: 16  #候选字词大小
+      text_color: 0x424242  #高亮选中词颜色
+      label_font_face: "PingFang SC Light"   #候选词编号字体
+      label_font_point: 12   #候选编号大小
+      hilited_candidate_text_color: 0xEE6E00  #候选文字颜色
+      hilited_candidate_back_color: 0xFFF0E4  #候选文字背景色
+      comment_text_color: 0x999999  #拼音等提示文字颜色
