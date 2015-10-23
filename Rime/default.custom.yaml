@@ -22,6 +22,8 @@ patch:
   key_binder:
     bindings:
       - { when: always, accept: Control+t, toggle: flypy_zh_simp }
+      - { when: has_menu, accept: equal, send: Page_Down }
+      - { when: has_menu, accept: minus, send: Page_Up }
 
 #下面定义“输入选单”的切换控制
   switcher:
