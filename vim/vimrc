@@ -1,3 +1,6 @@
+if has('nvim')
+  runtime! plugin/python_setup.vim
+endif
 " Use Vim settings, rather then Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 set nocompatible
@@ -30,7 +33,9 @@ Plugin 'garbas/vim-snipmate'
  Plugin 'honza/vim-snippets'
 Plugin 'tpope/vim-endwise'
 Plugin 'tmhedberg/matchit'
-Plugin 'vim-scripts/AutoComplPop'
+"Plugin 'vim-scripts/AutoComplPop'
+Plugin 'L9'
+Plugin 'othree/vim-autocomplpop'
 Plugin 'pangloss/vim-javascript'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
@@ -154,12 +159,12 @@ map <C-K> <C-W>k<C-W>_
 map <C-L> <C-W>l<C-W>
 
 map <Leader>rt :!ctags --extra=+f  --exclude=.git --exclude=log -R * `pwd`/*<CR><CR>
-imap jj <Esc>           "set ESC map
+inoremap jj <ESC>  "set ESC map
 
 autocmd FileType html,css,eruby EmmetInstall
 autocmd FileType c,cpp,java,php,js,python,twig,xml,yml autocmd BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
 autocmd BufNewFile,BufRead *.scss set ft=css
-autocmd BufRead,BufNewFile *.js set syntax=jquery
+autocmd BufRead,BufNewFile *.emblem set syntax=haml
 
 
 " ================================= Plugins Configration ==================================
@@ -242,6 +247,7 @@ let g:javascript_enable_domhtmlcss = 1
 
 " *********************************** AutoComplPop *******************************
 let g:acp_enableAtStartup = 1
+let g:acp_behaviorSnipmateLength = 1
 let g:acp_mappingDriven = 0
 
 " *********************************** Vim Instant Markdown *******************************
