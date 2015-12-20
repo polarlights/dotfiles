@@ -87,5 +87,6 @@ export SKIP_DATA_LOAD=true
 alias vim="nvim"
 alias bi="bundle install"
 alias be="bundle exec"
+alias upload="bundle exec cap development deploy"
 
 [ -s "/Users/huyang/.scm_breeze/scm_breeze.sh" ] && source "/Users/huyang/.scm_breeze/scm_breeze.sh"
