@@ -1,57 +1,70 @@
-if has('nvim')
-  runtime! plugin/python_setup.vim
-endif
 " Use Vim settings, rather then Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 filetype off
 
+function! BuildYCM(info)
+  " info is a dictionary with 3 fields
+  " - name:   name of the plugin
+  " - status: 'installed', 'updated', or 'unchanged'
+  " - force:  set on PlugInstall! or PlugUpdate!
+  if a:info.status == 'installed' || a:info.force
+    !./install.py --tern-completer
+  endif
+endfunction
+
+
 "Setup Plugin Support{
-set rtp+=~/.vim/bundle/Vundle.vim/
-call vundle#begin()
+call plug#begin('~/.vim/plugged')
 "}
 
 " ================================= Plugins ==================================
-"Core
-Plugin 'VundleVim/Vundle.vim'
-
 "Color
-Plugin 'altercation/vim-colors-solarized'
+Plug 'altercation/vim-colors-solarized'
 
 "Lang
-Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'kien/ctrlp.vim'
-Plugin 'mattn/emmet-vim'
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'rking/ag.vim'
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-Plugin 'honza/vim-snippets'
-Plugin 'tpope/vim-endwise'
-Plugin 'tmhedberg/matchit'
-Plugin 'vim-scripts/AutoComplPop'
-Plugin 'pangloss/vim-javascript'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/nerdcommenter'
-Bundle 'jistr/vim-nerdtree-tabs'
-"Plugin 'scrooloose/syntastic'
-Plugin 'benekastah/neomake'
-Plugin 'jlanzarotta/bufexplorer'
-Plugin 'ap/vim-css-color'
-Plugin 'vim-scripts/jsbeautify'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'suan/vim-instant-markdown'
+Plug 'tpope/vim-rails', { 'for': ['ruby', 'haml'] }
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'kien/ctrlp.vim'
+Plug 'mattn/emmet-vim', { 'for': ['html', 'css', 'scss', 'sass', 'eruby'] }
+Plug 'Lokaltog/vim-easymotion'
+Plug 'rking/ag.vim'
+" Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
+Plug 'tpope/vim-endwise'
+Plug 'tmhedberg/matchit'
+"Plug 'vim-scripts/AutoComplPop'
+Plug 'eparreno/vim-l9'
+Plug 'othree/vim-autocomplpop'
+
+" Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdcommenter'
+Plug 'jistr/vim-nerdtree-tabs'
+"Plug 'scrooloose/syntastic'
+Plug 'benekastah/neomake'
+Plug 'jlanzarotta/bufexplorer'
+Plug 'ap/vim-css-color'
+Plug 'jiangmiao/auto-pairs'
+Plug 'vim-scripts/jsbeautify', { 'for': ['javascript', 'coffee'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'coffee'] }
+Plug 'kchmck/vim-coffee-script', { 'for': ['coffee'] }
+Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'suan/vim-instant-markdown', { 'for': 'markdown' }
+
+Plug 'junegunn/vim-easy-align'
 "}
 
 "Vim powerline
-Plugin 'bling/vim-airline'
+Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
-call vundle#end()  "required
+" Add plugins to &runtimepath
+call plug#end()
 
 " ================================= Vim Functions ==================================
 
@@ -96,6 +109,7 @@ set shiftwidth=2                " use indents of 2 spaces
 set expandtab                   " tabs are spaces, not tabs
 set tabstop=2                   " an indentation every four columns
 set softtabstop=2               " let backspace delete indent
+set smarttab                    "insert tabs on the start of a line according to shiftwidth, not tabstop"
 set wildignore+=*/tmp/*,*.so*,*.swp,*.zip,._*,*DS_Store*,log/**,*.png,*.jpg,*.gif "MacOSX or Linux
 syntax on                       "syntax highlighting
 "set matchpairs+=<:>                " match, to be used with %
@@ -107,12 +121,12 @@ set shortmess+=filmnrxoOtT      "abbrev. of messages (avoids 'hit enter')
 set viewoptions=folds,options,cursor,unix,slash " better unix / windows compatibility
 set virtualedit=onemore         "allow for cursor beyond last character
 if has('gui_running')
-  set guioptions-=T             " remove the toolbar
-  set lines=40                  " 40 lines of text instead of 24,
-  set guifont=Monoca\ for\ Powerline:h19
-  if has('gui_macvim')
-    set transparency=5          " Make the window slightly transparent
-  endif
+ set guioptions-=T             " remove the toolbar
+ set lines=40                  " 40 lines of text instead of 24,
+ set guifont=Monoca\ for\ Powerline:h19
+ if has('gui_macvim')
+   set transparency=5          " Make the window slightly transparent
+ endif
 endif
 
 set tags+=tags             "set tags
@@ -129,11 +143,11 @@ set laststatus=2
 let g:airline_powerline_fonts = 1
 let g:airline_theme='molokai'
 
-" if has('cmdline_info')
-"   set ruler                   " show the ruler
-"   set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
-"   set showcmd                 " show partial commands in status line and
-" endif
+if has('cmdline_info')
+  set ruler                   " show the ruler
+  set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
+  set showcmd                 " show partial commands in status line and
+endif
 
 " if has('statusline')
 "   set laststatus=2
@@ -164,7 +178,6 @@ nmap <C-s> :w<CR>:echo expand("%f") . " saved."<CR>
 nnoremap ; :
 set clipboard=unnamed
 " Easier moving in tabs and windows
-""
 if has('nvim')
   nmap <BS> <C-W>h
 endif
@@ -180,6 +193,7 @@ autocmd FileType html,css,eruby EmmetInstall
 autocmd FileType c,cpp,java,php,js,python,twig,xml,yml autocmd BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
 autocmd BufNewFile,BufRead *.scss set ft=css
 autocmd BufNewFile,BufRead *.rabl set ft=ruby
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 
 " 切换前后buffer
 nnoremap [b :bprevious<cr>
@@ -229,7 +243,7 @@ if has("autocmd")
   endif
 endif
 
-" ================================= Plugins Configration ==================================
+" ================================= Plugs Configration ==================================
 " ********************************* Ctrlp ********************************
 let g:ctrlp_map = '<C-p>'
 let g:ctrlp_working_path_mode = 'ra'
@@ -260,7 +274,9 @@ let g:user_emmet_install_global = 0
 
 " ********************************* NerdTree ********************************
 nnoremap <leader>t :NERDTreeToggle<cr>
-autocmd vimenter * if !argc() | NERDTree | endif "Open nerdtree when no files specific"
+if !argc() | NERDTree |
+endif
+"autocmd vimenter * if !argc() | NERDTree | endif "Open nerdtree when no files specific"
 let NERDTreeChDirMode = 2
 let NERDTreeIgnore=['\.vim$', '\~$', '\.git', '.jpg', '.png', '.gif', 'node_modules$', 'bower_components$']
 let g:nerdtree_tabs_open_on_gui_startup = 0
@@ -324,3 +340,12 @@ if executable('ag')
 endif
 
 nnoremap K :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+
+" *********************************** Vim Easy Align *******************************
+vmap <Leader>a <Plug>(EasyAlign)
+nmap <Leader>a <Plug>(EasyAlign)
+if !exists('g:easy_align_delimeters')
+  let g:easy_align_delimeters = {}
+endif
+let g:easy_align_delimeters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }

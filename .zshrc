@@ -49,7 +49,7 @@ DISABLE_AUTO_TITLE="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git rails ruby autojump tmux)
+plugins=(bundler git rails ruby autojump tmux)
 
 # User configuration
 
@@ -70,6 +70,7 @@ export LC_ALL=en_US.UTF-8
 # fi
 export EDITOR='vim'
 export SKIP_DATA_LOAD=true
+export VIM=""
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -84,9 +85,13 @@ export SKIP_DATA_LOAD=true
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias vim="nvim"
-alias bi="bundle install"
-alias be="bundle exec"
+alias vim="mvim -v"
 alias upload="bundle exec cap development deploy"
 
 [ -s "/Users/huyang/.scm_breeze/scm_breeze.sh" ] && source "/Users/huyang/.scm_breeze/scm_breeze.sh"
+
+#alias for cnpm
+alias cnpm="npm --registry=https://registry.npm.taobao.org \
+  --cache=$HOME/.npm/.cache/cnpm \
+  --disturl=https://npm.taobao.org/dist \
+  --userconfig=$HOME/.cnpmrc"
