@@ -24,38 +24,35 @@ Plug 'altercation/vim-colors-solarized'
 
 "Lang
 Plug 'tpope/vim-rails', { 'for': ['ruby', 'haml'] }
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'kien/ctrlp.vim'
 Plug 'mattn/emmet-vim', { 'for': ['html', 'css', 'scss', 'sass', 'eruby'] }
-Plug 'Lokaltog/vim-easymotion'
-Plug 'rking/ag.vim'
-" Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-Plug 'garbas/vim-snipmate'
-Plug 'tpope/vim-endwise'
-Plug 'tmhedberg/matchit'
-"Plug 'vim-scripts/AutoComplPop'
-Plug 'eparreno/vim-l9'
-Plug 'othree/vim-autocomplpop'
-
-" Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'scrooloose/nerdcommenter'
-Plug 'jistr/vim-nerdtree-tabs'
-"Plug 'scrooloose/syntastic'
-Plug 'benekastah/neomake'
-Plug 'jlanzarotta/bufexplorer'
 Plug 'ap/vim-css-color'
-Plug 'jiangmiao/auto-pairs'
 Plug 'vim-scripts/jsbeautify', { 'for': ['javascript', 'coffee'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'coffee'] }
-Plug 'kchmck/vim-coffee-script', { 'for': ['coffee'] }
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'suan/vim-instant-markdown', { 'for': 'markdown' }
 
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'rking/ag.vim'
+Plug 'tpope/vim-endwise'
+Plug 'tmhedberg/matchit'
+
+Plug 'eparreno/vim-l9'
+Plug 'othree/vim-autocomplpop'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/neomru.vim'
+Plug 'Shougo/vimproc.vim'
+
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle'] }
+Plug 'scrooloose/nerdcommenter'
+Plug 'jistr/vim-nerdtree-tabs'
+
+Plug 'benekastah/neomake', { 'on': ['Neomake'] }
+Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 "}
 
@@ -234,6 +231,41 @@ nnoremap <leader>q :q<CR>
 " Quickly save the current file
 nnoremap <leader>w :w<CR>
 
+" When jump to next match also center screen
+nnoremap n nzz
+nnoremap N Nzz
+vnoremap n nzz
+vnoremap N Nzz
+
+" Same when moving up and down
+nnoremap <C-u> <C-u>zz
+nnoremap <C-d> <C-d>zz
+nnoremap <C-f> <C-f>zz
+nnoremap <C-b> <C-b>zz
+vnoremap <C-u> <C-u>zz
+vnoremap <C-d> <C-d>zz
+vnoremap <C-f> <C-f>zz
+vnoremap <C-b> <C-b>zz
+
+" Remap H and L (top, bottom of screen to left and right end of line)
+nnoremap H ^
+nnoremap L $
+vnoremap H ^
+vnoremap L g_
+
+" Move visual block
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" Start substitute on current word under the cursor
+nnoremap ,s :%s///gc<Left><Left><Left>
+
+" Start search on current word under the cursor
+nnoremap ,/ /<CR>
+
+" Start reverse search on current word under the cursor
+nnoremap ,? ?<CR>
+
 " 设置可以高亮的关键字
 if has("autocmd")
   " Highlight TODO, FIXME, NOTE, etc.
@@ -245,13 +277,13 @@ endif
 
 " ================================= Plugs Configration ==================================
 " ********************************* Ctrlp ********************************
-let g:ctrlp_map = '<C-p>'
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_root_markers = ['.git','Gemfile','.vimrc','.bashrc', '.zshrc']
-let g:ctrlp_custom_ignore = {
-      \'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components)$',
-      \'file': '\v\.(exe|so|dll)$'
-      \ }
+" let g:ctrlp_map = '<C-p>'
+" let g:ctrlp_working_path_mode = 'ra'
+" let g:ctrlp_root_markers = ['.git','Gemfile','.vimrc','.bashrc', '.zshrc']
+" let g:ctrlp_custom_ignore = {
+      " \'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components)$',
+      " \'file': '\v\.(exe|so|dll)$'
+      " \ }
 
 
 " ********************************* Fugitive ********************************
@@ -274,8 +306,7 @@ let g:user_emmet_install_global = 0
 
 " ********************************* NerdTree ********************************
 nnoremap <leader>t :NERDTreeToggle<cr>
-if !argc() | NERDTree |
-endif
+autocmd VimEnter * NERDTree | wincmd p
 "autocmd vimenter * if !argc() | NERDTree | endif "Open nerdtree when no files specific"
 let NERDTreeChDirMode = 2
 let NERDTreeIgnore=['\.vim$', '\~$', '\.git', '.jpg', '.png', '.gif', 'node_modules$', 'bower_components$']
@@ -308,8 +339,8 @@ let g:neomake_javascript_enabled_makers = ['jshint']
 " *********************************** Ultisnips *******************************
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 
@@ -349,3 +380,59 @@ if !exists('g:easy_align_delimeters')
   let g:easy_align_delimeters = {}
 endif
 let g:easy_align_delimeters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
+
+
+" *********************************** Unite.Vim *******************************
+" Unite
+let g:unite_source_history_yank_enable = 1
+
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#filters#sorter_default#use(['sorter_rank'])
+" Like ctrlp.vim settings.
+call unite#custom#profile('default', 'context', {
+\   'start_insert': 1,
+\   'winheight': 10,
+\   'direction': 'botright',
+\   'ignore_case': 1,
+\ })
+
+" Custom mappings for the unite buffer
+autocmd FileType unite call s:unite_settings()
+function! s:unite_settings()
+  " Play nice with supertab
+  let b:SuperTabDisabled=1
+  " Enable navigation with control-j and control-k in insert mode
+  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+endfunction
+
+" Using ag as recursive command.
+let g:unite_source_rec_async_command =
+      \ ['ag', '--follow', '--nocolor', '--nogroup',
+      \  '--hidden', '-g', '']
+
+" Use ag in unite grep source.
+let g:unite_source_grep_command = 'ag'
+let g:unite_source_grep_default_opts =
+      \ '-i --vimgrep --hidden --ignore --nocolor --nogroup
+      \ ''bower_components'' --ignore ''.svn'' --ignore ''.git'' --ignore ''node_modules'''
+let g:unite_source_grep_recursive_opt = ''
+
+nnoremap <C-p> :<C-u>UniteWithProjectDir -buffer-name=files -start-insert file_rec/async:!<cr>
+nnoremap <leader>b :<C-u>Unite -no-split -buffer-name=buffer -quick-match buffer<cr>
+nnoremap <silent> <leader>g :<C-u>UniteWithProjectDir grep:.<CR>
+nnoremap <silent> <Leader>o :<C-u>UniteWithProjectDir file<CR>
+
+let g:deoplete#omni#input_patterns = {}
+		let g:deoplete#omni#input_patterns.ruby =
+		\ ['[^. *\t]\.\w*', '[a-zA-Z_]\w*::']
+
+
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
