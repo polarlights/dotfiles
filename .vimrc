@@ -3,17 +3,6 @@
 set nocompatible
 filetype off
 
-function! BuildYCM(info)
-  " info is a dictionary with 3 fields
-  " - name:   name of the plugin
-  " - status: 'installed', 'updated', or 'unchanged'
-  " - force:  set on PlugInstall! or PlugUpdate!
-  if a:info.status == 'installed' || a:info.force
-    !./install.py --tern-completer
-  endif
-endfunction
-
-
 "Setup Plugin Support{
 call plug#begin('~/.vim/plugged')
 "}
@@ -34,7 +23,6 @@ Plug 'suan/vim-instant-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'Lokaltog/vim-easymotion'
-Plug 'rking/ag.vim'
 Plug 'tpope/vim-endwise'
 Plug 'tmhedberg/matchit'
 
@@ -146,18 +134,6 @@ if has('cmdline_info')
   set showcmd                 " show partial commands in status line and
 endif
 
-" if has('statusline')
-"   set laststatus=2
-
-"   " Broken down into easily includeable segments
-"   set statusline=%<%f\    " Filename
-"   set statusline+=%w%h%m%r " Options
-"   set statusline+=%{fugitive#statusline()} "  Git Hotness
-"   set statusline+=\ [%{&ff}/%Y]            " filetype
-"   set statusline+=\ [%{getcwd()}]          " current dir
-"   set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
-" endif
-
 set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
 " }
 
@@ -165,12 +141,8 @@ set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
 "The default leader is '\', but many people prefer ',' as it's in a standard location
 let mapleader = ','
 " ctrl + a
-noremap <C-A> ggVG
-inoremap <C-A> <C-O>ggVG
-" ctrl + s
-imap <C-s> <esc>:w<CR>:echo expand("%f") . " saved."<CR>
-vmap <C-s> <esc>:w<CR>:echo expand("%f") . " saved."<CR>
-nmap <C-s> :w<CR>:echo expand("%f") . " saved."<CR>
+noremap <C-a> ggVG
+inoremap <C-a> <C-O>ggVG
 " Making it so ; works like : for commands. Saves typing and eliminates :W style typos due to lazy holding shift.
 nnoremap ; :
 set clipboard=unnamed
@@ -276,15 +248,6 @@ if has("autocmd")
 endif
 
 " ================================= Plugs Configration ==================================
-" ********************************* Ctrlp ********************************
-" let g:ctrlp_map = '<C-p>'
-" let g:ctrlp_working_path_mode = 'ra'
-" let g:ctrlp_root_markers = ['.git','Gemfile','.vimrc','.bashrc', '.zshrc']
-" let g:ctrlp_custom_ignore = {
-      " \'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components)$',
-      " \'file': '\v\.(exe|so|dll)$'
-      " \ }
-
 
 " ********************************* Fugitive ********************************
 nnoremap <silent> <leader>gs :Gstatus<CR>
@@ -326,7 +289,6 @@ let g:EasyMotion_use_smartsign_us = 1 " Smartsign (type `3` and match `3`&`#`)
 map / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
 
-" *********************************** Syntastic *******************************
 " *********************************** NeoMake *******************************
 autocmd! BufWritePost * Neomake
 let g:neomake_javascript_jshint_maker = {
@@ -357,22 +319,6 @@ let g:instant_markdown_autostart = 0
 map <Leader>m :InstantMarkdownPreview<CR>
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 
-" *********************************** Vim Ag *******************************
-" The Silver Searcher
-if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-endif
-
-nnoremap K :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>
-
-
 " *********************************** Vim Easy Align *******************************
 vmap <Leader>a <Plug>(EasyAlign)
 nmap <Leader>a <Plug>(EasyAlign)
@@ -382,57 +328,87 @@ endif
 let g:easy_align_delimeters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
 
 
-" *********************************** Unite.Vim *******************************
-" Unite
-let g:unite_source_history_yank_enable = 1
-
+" ************************************************** Unite.Vim ********************************************
+call unite#custom#source('codesearch', 'max_candidates', 30)
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#sorter_default#use(['sorter_rank'])
-" Like ctrlp.vim settings.
 call unite#custom#profile('default', 'context', {
-\   'start_insert': 1,
-\   'winheight': 10,
-\   'direction': 'botright',
-\   'ignore_case': 1,
-\ })
+            \   'safe': 0,
+            \   'start_insert': 1,
+            \   'ignorecase' : 1,
+            \   'short_source_names': 1,
+            \   'update_time': 200,
+            \   'direction': 'rightbelow',
+            \   'winwidth': 40,
+            \   'winheight': 15,
+            \   'max_candidates': 100,
+            \   'no_auto_resize': 1,
+            \   'vertical_preview': 1,
+            \   'cursor_line_time': '0.10',
+            \   'hide_icon': 0,
+            \   'candidate-icon': ' ',
+            \   'marked_icon': '✓',
+            \   'prompt' : ' ➭'
+            \ })
+
+let g:unite_source_codesearch_ignore_case = 1
+let g:unite_source_buffer_time_format = '(%m-%d-%Y %H:%M:%S) '
+let g:unite_source_file_mru_time_format = '(%m-%d-%Y %H:%M:%S) '
+let g:unite_source_directory_mru_time_format = '(%m-%d-%Y %H:%M:%S) '
+let g:unite_source_directory_mru_limit = 80
+let g:unite_source_file_rec_max_depth = 6
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+let g:unite_source_history_yank_enable=1
+let g:unite_split_rule = 'botright'
+let g:unite_winheight=25
+let g:unite_source_grep_default_opts = "-iRHn"
+            \ . " --exclude='tags'"
+            \ . " --exclude='*.log*'"
+            \ . " --exclude='*tmp*'"
+            \ . " --exclude-dir='**/tmp'"
+            \ . " --exclude-dir='.svn'"
+            \ . " --exclude-dir='.git'"
+            \ . " --exclude-dir='bower_components'"
+            \ . " --exclude-dir='node_modules'"
+let g:unite_source_grep_max_candidates = 200
+
+" Use ag in unite grep source.
+let g:unite_source_grep_command = 'ag'
+let g:unite_source_grep_default_opts =
+      \ '-i --line-numbers --nocolor --nogroup --hidden --ignore ' .
+      \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''tags'' --ignore ''node_modules'' --ignore ''bower_components'''
+let g:unite_source_grep_recursive_opt = ''
+
+call unite#custom#profile('file_rec/async,file_rec/git', 'context', {
+            \   'start_insert' : 1,
+            \   'quit'         : 1,
+            \   'split'        : 1,
+            \   'keep_focus'   : 1,
+            \   'winheight'    : 20,
+            \ })
+call unite#custom#source('file_rec/async', 'ignore_globs',['*.png','.git/','*.ttf', '.DS_Store'])
+" Using ag as recursive command.
+let g:unite_source_rec_async_command =
+      \ ['ag', '--follow', '--nocolor', '--nogroup',
+      \  '--hidden', '-g', '']
 
 " Custom mappings for the unite buffer
-autocmd FileType unite call s:unite_settings()
 function! s:unite_settings()
   " Play nice with supertab
   let b:SuperTabDisabled=1
   " Enable navigation with control-j and control-k in insert mode
   imap <buffer> <C-j>   <Plug>(unite_select_next_line)
   imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+  inoremap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
+  inoremap <silent><buffer><expr> <C-x>     unite#do_action('split')
 endfunction
+autocmd FileType unite call s:unite_settings()
 
-" Using ag as recursive command.
-let g:unite_source_rec_async_command =
-      \ ['ag', '--follow', '--nocolor', '--nogroup',
-      \  '--hidden', '-g', '']
-
-" Use ag in unite grep source.
-let g:unite_source_grep_command = 'ag'
-let g:unite_source_grep_default_opts =
-      \ '-i --vimgrep --hidden --ignore --nocolor --nogroup
-      \ ''bower_components'' --ignore ''.svn'' --ignore ''.git'' --ignore ''node_modules'''
-let g:unite_source_grep_recursive_opt = ''
-
-nnoremap <C-p> :<C-u>UniteWithProjectDir -buffer-name=files -start-insert file_rec/async:!<cr>
+" key mappings
+nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert file_rec/async:!<cr>
 nnoremap <leader>b :<C-u>Unite -no-split -buffer-name=buffer -quick-match buffer<cr>
-nnoremap <silent> <leader>g :<C-u>UniteWithProjectDir grep:.<CR>
-nnoremap <silent> <Leader>o :<C-u>UniteWithProjectDir file<CR>
-
-let g:deoplete#omni#input_patterns = {}
-		let g:deoplete#omni#input_patterns.ruby =
-		\ ['[^. *\t]\.\w*', '[a-zA-Z_]\w*::']
-
-
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+" For searching the word handin
+nnoremap <silent> <leader>g :<C-u>Unite -auto-preview -no-split grep:.<CR>
+" For searching the word in the cursor in the current directory
+nnoremap <silent><leader>v :Unite -auto-preview -no-split grep:.::<C-R><C-W><CR>
