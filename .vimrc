@@ -26,8 +26,14 @@ Plug 'Lokaltog/vim-easymotion'
 Plug 'tpope/vim-endwise'
 Plug 'tmhedberg/matchit'
 
-Plug 'eparreno/vim-l9'
-Plug 'othree/vim-autocomplpop'
+"Plug 'eparreno/vim-l9'
+"Plug 'othree/vim-autocomplpop'
+function! DoRemote(arg)
+  UpdateRemotePlugins
+endfunction
+Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
+Plug 'carlitux/deoplete-ternjs'
+
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
@@ -39,7 +45,7 @@ Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle'] }
 Plug 'scrooloose/nerdcommenter'
 Plug 'jistr/vim-nerdtree-tabs'
 
-Plug 'benekastah/neomake', { 'on': ['Neomake'] }
+Plug 'neomake/neomake', { 'on': ['Neomake'] }
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 "}
@@ -162,7 +168,7 @@ autocmd FileType html,css,eruby EmmetInstall
 autocmd FileType c,cpp,java,php,js,python,twig,xml,yml autocmd BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
 autocmd BufNewFile,BufRead *.scss set ft=css
 autocmd BufNewFile,BufRead *.rabl set ft=ruby
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+"autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 
 " 切换前后buffer
 nnoremap [b :bprevious<cr>
@@ -310,8 +316,8 @@ let g:UltiSnipsEditSplit="vertical"
 let g:javascript_enable_domhtmlcss = 1
 
 " *********************************** AutoComplPop *******************************
-let g:acp_enableAtStartup = 1
-let g:acp_mappingDriven = 0
+"let g:acp_enableAtStartup = 1
+"let g:acp_mappingDriven = 0
 
 " *********************************** Vim Instant Markdown *******************************
 let g:instant_markdown_slow = 1
@@ -412,3 +418,54 @@ nnoremap <leader>b :<C-u>Unite -no-split -buffer-name=buffer -quick-match buffer
 nnoremap <silent> <leader>g :<C-u>Unite -auto-preview -no-split grep:.<CR>
 " For searching the word in the cursor in the current directory
 nnoremap <silent><leader>v :Unite -auto-preview -no-split grep:.::<C-R><C-W><CR>
+
+
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+" Use smartcase.
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#omni#input_patterns = {}
+let g:deoplete#omni#input_patterns.ruby =
+      \ ['[^. *\t]\.\w*', '[a-zA-Z_]\w*::']
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
+inoremap <expr><BS>  deoplete#mappings#smart_close_popup()."\<C-h>"
+
+inoremap <expr><C-g> deoplete#mappings#undo_completion()
+" <C-l>: redraw candidates
+inoremap <expr><C-l>       deoplete#mappings#refresh()
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function() abort
+  return deoplete#mappings#close_popup() . "\<CR>"
+endfunction
+" <TAB>: completion.
+imap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ deoplete#mappings#manual_complete()
+function! s:check_back_space() abort "{{{
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
+
+" <S-TAB>: completion back.
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <expr> '  pumvisible() ? deoplete#mappings#close_popup() : "'"
+let g:deoplete#keyword_patterns = {}
+let g:deoplete#keyword_patterns._ = '[a-zA-Z_]\k*\(?'
+
+
+" Use deoplete.
+let g:tern_request_timeout = 1
+let g:tern_show_signature_in_pum = 0  " This do disable full signature type on autocomplete
+
+" omnifuncs
+augroup omnifuncs
+  autocmd!
+  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+augroup end
