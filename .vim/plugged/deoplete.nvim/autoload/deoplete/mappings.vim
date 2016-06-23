@@ -13,6 +13,7 @@ endfunction"}}}
 
 function! deoplete#mappings#_do_complete(context) abort "{{{
   if b:changedtick == get(a:context, 'changedtick', -1)
+        \ && mode() ==# 'i'
     call complete(a:context.complete_position + 1, a:context.candidates)
   endif
 
@@ -62,6 +63,9 @@ function! deoplete#mappings#cancel_popup() abort "{{{
 endfunction"}}}
 function! deoplete#mappings#refresh() abort "{{{
   let g:deoplete#_context.refresh = 1
+  if g:deoplete#_context.event ==# 'Manual'
+    let g:deoplete#_context.event = 'Refresh'
+  endif
   return pumvisible() ? "\<C-e>" : ''
 endfunction"}}}
 

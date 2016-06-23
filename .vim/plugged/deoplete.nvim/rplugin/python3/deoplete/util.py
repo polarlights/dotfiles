@@ -9,16 +9,23 @@ import re
 import os
 import sys
 import unicodedata
+import glob
 
 
-def get_buffer_config(vim, filetype, buffer_var, user_var, default_var):
-    return vim.call('deoplete#util#get_buffer_config',
-                    filetype, buffer_var, user_var, default_var)
+def get_buffer_config(context, filetype, buffer_var, user_var, default_var):
+    if buffer_var in context['bufvars']:
+        return context['bufvars'][buffer_var]
+
+    ft = filetype if (filetype in context['vars'][user_var] or
+                      filetype in context['vars'][default_var]) else '_'
+    default = context['vars'][default_var].get(ft, '')
+    return context['vars'][user_var].get(ft, default)
 
 
-def get_simple_buffer_config(vim, buffer_var, user_var):
-    return vim.call('deoplete#util#get_simple_buffer_config',
-                    buffer_var, user_var)
+def get_simple_buffer_config(context, buffer_var, user_var):
+    return (context['bufvars'][buffer_var]
+            if buffer_var in context['bufvars']
+            else context['vars'][user_var])
 
 
 def set_pattern(vim, variable, keys, pattern):
@@ -37,21 +44,20 @@ def convert2list(expr):
     return (expr if isinstance(expr, list) else [expr])
 
 
-def globruntime(vim, path):
-    return vim.funcs.globpath(vim.options['runtimepath'], path, 1, 1)
+def globruntime(runtimepath, path):
+    ret = []
+    for rtp in re.split(',', runtimepath):
+        ret += glob.glob(rtp + '/' + path)
+    return ret
 
 
 def debug(vim, expr):
-    if vim.vars['deoplete#enable_debug']:
-        try:
-            json_data = json.dumps(str(expr).strip())
-        except Exception:
-            vim.command('echomsg string(\'' + str(expr).strip() + '\')')
-        else:
-            vim.command('echomsg string(\'' + escape(json_data) + '\')')
-
+    try:
+        json_data = json.dumps(str(expr).strip())
+    except Exception:
+        vim.command('echomsg string(\'' + str(expr).strip() + '\')')
     else:
-        error(vim, "not in debug mode, but debug called")
+        vim.command('echomsg string(\'' + escape(json_data) + '\')')
 
 
 def error(vim, msg):
@@ -62,17 +68,23 @@ def escape(expr):
     return expr.replace("'", "''")
 
 
-def charpos2bytepos(vim, input, pos):
-    return len(bytes(input[: pos], vim.options['encoding']))
+def charpos2bytepos(encoding, input, pos):
+    return len(bytes(input[: pos], encoding))
 
 
-def bytepos2charpos(vim, input, pos):
-    return len(vim.funcs.substitute(
-        vim.funcs.strpart(input, 0, pos), '.', 'x', 'g'))
+def bytepos2charpos(encoding, input, pos):
+    return len(bytes(input, encoding)[: pos].decode(encoding))
 
 
-def get_custom(vim, source_name):
-    return vim.call('deoplete#custom#get', source_name)
+def get_custom(custom, source_name, key, default):
+    if source_name not in custom:
+        return get_custom(custom, '_', key, default)
+    elif key in custom[source_name]:
+        return custom[source_name][key]
+    elif key in custom['_']:
+        return custom['_'][key]
+    else:
+        return default
 
 
 def get_syn_name(vim):
@@ -81,7 +93,10 @@ def get_syn_name(vim):
 
 def parse_file_pattern(f, pattern):
     p = re.compile(pattern)
-    return list(set(p.findall('\n'.join(f.read()))))
+    ret = []
+    for l in f:
+        ret += p.findall(l)
+    return list(set(ret))
 
 
 def parse_buffer_pattern(b, pattern, complete_str):

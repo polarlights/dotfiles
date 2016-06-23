@@ -105,8 +105,6 @@ function! deoplete#init#_variables() abort "{{{
   call deoplete#util#set_default(
         \ 'g:deoplete#max_list', 100)
   call deoplete#util#set_default(
-        \ 'g:deoplete#enable_debug', 0)
-  call deoplete#util#set_default(
         \ 'g:deoplete#enable_profile', 0)
   call deoplete#util#set_default(
         \ 'g:deoplete#auto_complete_delay', 0)
@@ -127,6 +125,8 @@ function! deoplete#init#_variables() abort "{{{
         \ 'g:deoplete#sources', {})
   call deoplete#util#set_default(
         \ 'g:deoplete#ignore_sources', {})
+  call deoplete#util#set_default(
+        \ 'g:deoplete#_ignore_sources', {})
 
   " Source variables
   call deoplete#util#set_default(
@@ -222,7 +222,7 @@ function! deoplete#init#_context(event, sources) abort "{{{
   let keyword_patterns = substitute(keyword_patterns,
         \ '\\k', '\=pattern', 'g')
 
-  let event = (deoplete#util#get_prev_event() ==# 'refresh') ?
+  let event = (deoplete#util#get_prev_event() ==# 'Refresh') ?
         \ 'Manual' : a:event
 
   let input = deoplete#util#get_input(a:event)
@@ -246,6 +246,16 @@ function! deoplete#init#_context(event, sources) abort "{{{
         \ 'keyword_patterns': keyword_patterns,
         \ 'max_abbr_width': (width * 2 / 3),
         \ 'max_menu_width': (width * 2 / 3),
+        \ 'runtimepath': &runtimepath,
+        \ 'bufnr': bufnr('%'),
+        \ 'bufname': bufname('%'),
+        \ 'cwd': getcwd(),
+        \ 'start_complete': "\<Plug>(deoplete_start_complete)",
+        \ 'vars': filter(copy(g:), "stridx(v:key, 'deoplete#') == 0"),
+        \ 'bufvars': filter(copy(b:), "stridx(v:key, 'deoplete_') == 0"),
+        \ 'custom': deoplete#custom#get(),
+        \ 'omni__omnifunc': &l:omnifunc,
+        \ 'dict__dictionary': &l:dictionary,
         \ }
 endfunction"}}}
 

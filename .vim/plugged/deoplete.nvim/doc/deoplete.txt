@@ -1,6 +1,6 @@
 *deoplete.txt*	Dark powered asynchronous completion framework for neovim.
 
-Version: 1.2
+Version: 2.0
 Author: Shougo <Shougo.Matsu at gmail.com>
 License: MIT license
 
@@ -58,10 +58,11 @@ You can enable Python3 interface with pip: >
     sudo pip3 install neovim
 
 If you want to read for Neovim-python/python3 interface install documentation,
-you should read |nvim-python| and the Wiki.
+you should read |provider-python| and the Wiki.
 https://github.com/zchee/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
 
-You can check the Python3 installation by nvim-python-doctor.
+You can check the Python3 installation by nvim-python-doctor or |:CheckHealth|
+command.
 https://github.com/tweekmonster/nvim-python-doctor
 
 ==============================================================================
@@ -132,11 +133,6 @@ g:deoplete#disable_auto_complete
 					*b:deoplete_disable_auto_complete*
 b:deoplete_disable_auto_complete
 		Buffer local variable of |g:deoplete#disable_auto_complete|.
-
-						*g:deoplete#enable_debug*
-g:deoplete#enable_debug
-		It enables deoplete debug mode.  The debug print feature is
-		enabled.
 
 						*g:deoplete#enable_profile*
 g:deoplete#enable_profile
@@ -250,6 +246,7 @@ b:deoplete_sources
 <						*g:deoplete#ignore_sources*
 g:deoplete#ignore_sources
 		It is a dictionary to decide ignore source names.
+		The key is filetype and the value is source names list.
 		Default value: {}
 
 						*b:deoplete_ignore_sources*
@@ -396,6 +393,11 @@ deoplete#custom#set({source-name}, {option-name}, {value})
 
 		" Change the source mark.
 		call deoplete#custom#set('buffer', 'mark', '*')
+		" Disable the source mark.
+		call deoplete#custom#set('omni', 'mark', '')
+
+		" Enable jedi source debug messages
+		call deoplete#custom#set('jedi', 'debug_enabled', 1)
 <
 						*deoplete#enable_logging()*
 deoplete#enable_logging({level}, {logfile})
@@ -405,6 +407,10 @@ deoplete#enable_logging({level}, {logfile})
 		{logfile} is the file where log messages are written.
 		Messages are appended to this file.  Each log session will
 		start with "--- Deoplete Log Start ---".
+		Note: You must enable
+		|deoplete-source-attribute-debug_enabled| to debug the
+		sources.
+
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS 					*deoplete-key-mappings*
@@ -858,8 +864,24 @@ https://github.com/landaire/deoplete-swift
 neovim-intellij-complete-deoplete: "intellij" source for Intellij IDE
 https://github.com/vhakulinen/neovim-intellij-complete-deoplete
 
-tmux-complete: "tmuxcomplete" source for tmux panes.
+tmux-complete: "tmuxcomplete" source for tmux panes
 https://github.com/wellle/tmux-complete.vim
+
+deoplete-cpp: "cmake" and "cpp" and "identifier" sources for "cmake", "c",
+"cpp", "objc", "objcpp" and "arduino" filetypes
+https://github.com/kiddos/deoplete-cpp
+
+deoplete-github: "github" source for "gitcommit" filetype
+https://github.com/SevereOverfl0w/deoplete-github
+
+deoplete-flow: "flow" source for JavaScript
+https://github.com/steelsojka/deoplete-flow
+
+deoplete-d: "d" source for D language
+https://github.com/landaire/deoplete-d
+
+deoplete-rtags: "rtags" source for "c", "cpp", "objc" and "objcpp" filetypes.
+https://github.com/LuXuryPro/deoplete-rtags
 
 ==============================================================================
 EXTERNAL PLUGINS				*deoplete-external-plugins*
@@ -1108,6 +1130,30 @@ A: You must disable deoplete when using vim-multiple-cursors. >
 	function g:Multiple_cursors_after()
 	  let g:deoplete#disable_auto_complete = 0
 	endfunction
+
+
+Q: The candidates are filtered by first character.
+https://github.com/Shougo/deoplete.nvim/issues/288
+
+A: >
+	call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
+<
+Q: Are there any plans to support GotoDefinition feature like YouCompleteMe?
+
+A: https://github.com/zchee/deoplete-jedi/issues/35
+
+
+Q: What about the alphabetical sorting of all entries?
+
+A: >
+	call deoplete#custom#set('_', 'sorters', ['sorter_word'])
+<
+
+Q: I want to change the UltiSnips source order.
+
+A: >
+	call deoplete#custom#set('ultisnips', 'rank', 1000)
+<
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:

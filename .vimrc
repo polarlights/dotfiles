@@ -13,7 +13,9 @@ Plug 'altercation/vim-colors-solarized'
 
 "Lang
 Plug 'tpope/vim-rails', { 'for': ['ruby', 'haml'] }
+Plug 'kien/ctrlp.vim'
 Plug 'mattn/emmet-vim', { 'for': ['html', 'css', 'scss', 'sass', 'eruby'] }
+Plug 'jlanzarotta/bufexplorer'
 Plug 'ap/vim-css-color'
 Plug 'vim-scripts/jsbeautify', { 'for': ['javascript', 'coffee'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'coffee'] }
@@ -22,6 +24,7 @@ Plug 'suan/vim-instant-markdown', { 'for': 'markdown' }
 
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
+Plug 'rking/ag.vim'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'tpope/vim-endwise'
 Plug 'tmhedberg/matchit'
@@ -31,15 +34,12 @@ Plug 'tmhedberg/matchit'
 function! DoRemote(arg)
   UpdateRemotePlugins
 endfunction
+Plug 'Shougo/echodoc.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 Plug 'carlitux/deoplete-ternjs'
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-
-Plug 'Shougo/unite.vim'
-Plug 'Shougo/neomru.vim'
-Plug 'Shougo/vimproc.vim'
 
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle'] }
 Plug 'scrooloose/nerdcommenter'
@@ -103,6 +103,7 @@ set softtabstop=2               " let backspace delete indent
 set smarttab                    "insert tabs on the start of a line according to shiftwidth, not tabstop"
 set wildignore+=*/tmp/*,*.so*,*.swp,*.zip,._*,*DS_Store*,log/**,*.png,*.jpg,*.gif "MacOSX or Linux
 syntax on                       "syntax highlighting
+set noshowmode
 "set matchpairs+=<:>                " match, to be used with %
 
 filetype plugin indent on       "Automatically detect file types
@@ -244,6 +245,8 @@ nnoremap ,/ /<CR>
 " Start reverse search on current word under the cursor
 nnoremap ,? ?<CR>
 
+nnoremap <silent> <leader>b :BufExplorer<CR>
+
 " 设置可以高亮的关键字
 if has("autocmd")
   " Highlight TODO, FIXME, NOTE, etc.
@@ -254,8 +257,16 @@ if has("autocmd")
 endif
 
 " ================================= Plugs Configration ==================================
+" ********************************* Ctrlp ********************************
+let g:ctrlp_map = '<C-p>'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_root_markers = ['.git','Gemfile','.vimrc','.bashrc', '.zshrc']
+let g:ctrlp_custom_ignore = {
+     \'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components)$',
+     \'file': '\v\.(exe|so|dll)$',
+     \ }
 
-" ********************************* Fugitive ********************************
+"********************************* Fugitive ********************************
 nnoremap <silent> <leader>gs :Gstatus<CR>
 nnoremap <silent> <leader>gd :Gdiff<CR>
 nnoremap <silent> <leader>gc :Gcommit<CR>
@@ -287,6 +298,21 @@ let NERDTreeQuitOnOpen = 1
 let g:snipMate = {}
 let g:snipMate.scope_aliases = {}
 let g:snipMate.scope_aliases['ruby'] = 'ruby, rails'
+
+" *********************************** Vim Ag *******************************
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
+
+nnoremap K :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " *********************************** EasyMotion *******************************
 let g:EasyMotion_use_upper = 1 " Use uppercase target labels and type as a lower case
@@ -333,93 +359,6 @@ if !exists('g:easy_align_delimeters')
 endif
 let g:easy_align_delimeters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
 
-
-" ************************************************** Unite.Vim ********************************************
-call unite#custom#source('codesearch', 'max_candidates', 30)
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
-call unite#custom#profile('default', 'context', {
-            \   'safe': 0,
-            \   'start_insert': 1,
-            \   'ignorecase' : 1,
-            \   'short_source_names': 1,
-            \   'update_time': 200,
-            \   'direction': 'rightbelow',
-            \   'winwidth': 40,
-            \   'winheight': 15,
-            \   'max_candidates': 100,
-            \   'no_auto_resize': 1,
-            \   'vertical_preview': 1,
-            \   'cursor_line_time': '0.10',
-            \   'hide_icon': 0,
-            \   'candidate-icon': ' ',
-            \   'marked_icon': '✓',
-            \   'prompt' : ' ➭'
-            \ })
-
-let g:unite_source_codesearch_ignore_case = 1
-let g:unite_source_buffer_time_format = '(%m-%d-%Y %H:%M:%S) '
-let g:unite_source_file_mru_time_format = '(%m-%d-%Y %H:%M:%S) '
-let g:unite_source_directory_mru_time_format = '(%m-%d-%Y %H:%M:%S) '
-let g:unite_source_directory_mru_limit = 80
-let g:unite_source_file_rec_max_depth = 6
-let g:unite_enable_ignore_case = 1
-let g:unite_enable_smart_case = 1
-let g:unite_source_history_yank_enable=1
-let g:unite_split_rule = 'botright'
-let g:unite_winheight=25
-let g:unite_source_grep_default_opts = "-iRHn"
-            \ . " --exclude='tags'"
-            \ . " --exclude='*.log*'"
-            \ . " --exclude='*tmp*'"
-            \ . " --exclude-dir='**/tmp'"
-            \ . " --exclude-dir='.svn'"
-            \ . " --exclude-dir='.git'"
-            \ . " --exclude-dir='bower_components'"
-            \ . " --exclude-dir='node_modules'"
-let g:unite_source_grep_max_candidates = 200
-
-" Use ag in unite grep source.
-let g:unite_source_grep_command = 'ag'
-let g:unite_source_grep_default_opts =
-      \ '-i --line-numbers --nocolor --nogroup --hidden --ignore ' .
-      \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''tags'' --ignore ''node_modules'' --ignore ''bower_components'''
-let g:unite_source_grep_recursive_opt = ''
-
-call unite#custom#profile('file_rec/async,file_rec/git', 'context', {
-            \   'start_insert' : 1,
-            \   'quit'         : 1,
-            \   'split'        : 1,
-            \   'keep_focus'   : 1,
-            \   'winheight'    : 20,
-            \ })
-call unite#custom#source('file_rec/async', 'ignore_globs',['*.png','.git/','*.ttf', '.DS_Store'])
-" Using ag as recursive command.
-let g:unite_source_rec_async_command =
-      \ ['ag', '--follow', '--nocolor', '--nogroup',
-      \  '--hidden', '-g', '']
-
-" Custom mappings for the unite buffer
-function! s:unite_settings()
-  " Play nice with supertab
-  let b:SuperTabDisabled=1
-  " Enable navigation with control-j and control-k in insert mode
-  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
-  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
-  inoremap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
-  inoremap <silent><buffer><expr> <C-x>     unite#do_action('split')
-endfunction
-autocmd FileType unite call s:unite_settings()
-
-" key mappings
-nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert file_rec/async:!<cr>
-nnoremap <leader>b :<C-u>Unite -no-split -buffer-name=buffer -quick-match buffer<cr>
-" For searching the word handin
-nnoremap <silent> <leader>g :<C-u>Unite -auto-preview -no-split grep:.<CR>
-" For searching the word in the cursor in the current directory
-nnoremap <silent><leader>v :Unite -auto-preview -no-split grep:.::<C-R><C-W><CR>
-
-
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
 " Use smartcase.
@@ -434,11 +373,6 @@ inoremap <expr><BS>  deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><C-g> deoplete#mappings#undo_completion()
 " <C-l>: redraw candidates
 inoremap <expr><C-l>       deoplete#mappings#refresh()
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function() abort
-  return deoplete#mappings#close_popup() . "\<CR>"
-endfunction
 " <TAB>: completion.
 imap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -460,6 +394,8 @@ let g:deoplete#keyword_patterns._ = '[a-zA-Z_]\k*\(?'
 let g:tern_request_timeout = 1
 let g:tern_show_signature_in_pum = 0  " This do disable full signature type on autocomplete
 
+
+let g:echodoc_enable_at_startup = 1
 " omnifuncs
 augroup omnifuncs
   autocmd!
