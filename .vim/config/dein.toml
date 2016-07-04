@@ -1,0 +1,158 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'Shougo/vimproc.vim'
+build = 'make'
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+on_ft = 'toml'
+
+[[plugins]]
+repo = 'tpope/vim-markdown'
+on_ft = ['markdown', 'mkd']
+hook_add = '''
+  let g:instant_markdown_slow = 1
+  let g:instant_markdown_autostart = 0
+  map <Leader>m :InstantMarkdownPreview<CR>
+  autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+'''
+
+[[plugins]]
+repo =  'altercation/vim-colors-solarized'
+hook_add = '''
+  syntax enable
+  set background=dark
+  colorscheme solarized
+'''
+
+[[plugins]]
+repo =  'tpope/vim-rails'
+on_ft = ['ruby', 'haml']
+
+[[plugins]]
+repo = 'mattn/emmet-vim'
+on_ft = ['html', 'css', 'eruby']
+hook_add = '''
+  let g:user_emmet_expandabbr_key = '<leader>e'
+  let g:user_emmet_mode='a'
+  let g:user_emmet_install_global = 0
+'''
+
+[[plugins]]
+repo = 'ap/vim-css-color'
+on_ft = ['css', 'scss']
+
+[[plugins]]
+repo = 'vim-scripts/jsbeautify'
+on_ft = ['javascript', 'coffee']
+
+[[plugins]]
+repo = 'pangloss/vim-javascript'
+on_ft = ['javascript', 'coffee', 'html', 'haml']
+hook_add = '''
+  let g:javascript_enable_domhtmlcss = 1
+'''
+
+[[plugins]]
+repo = 'tpope/vim-haml'
+on_ft = ['haml', 'scss', 'sass']
+
+[[plugins]]
+repo = 'tpope/vim-fugitive'
+
+[[plugins]]
+repo = 'tpope/vim-surround'
+
+[[plugins]]
+repo = 'Lokaltog/vim-easymotion'
+hook_add = '''
+  let g:EasyMotion_use_upper = 1 " Use uppercase target labels and type as a lower case
+  let g:EasyMotion_smartcase = 1 " type `l` and match `l`&`L`
+  let g:EasyMotion_use_smartsign_us = 1 " Smartsign (type `3` and match `3`&`#`)
+  map / <Plug>(easymotion-sn)
+  omap / <Plug>(easymotion-tn)
+'''
+
+[[plugins]]
+repo = 'tpope/vim-endwise'
+
+[[plugins]]
+repo = 'tmhedberg/matchit'
+
+[[plugins]]
+repo = 'SirVer/ultisnips'
+hook_add = '''
+  let g:UltiSnipsExpandTrigger="<tab>"
+  let g:UltiSnipsJumpForwardTrigger="<tab>"
+  let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+  let g:UltiSnipsEditSplit="vertical"
+'''
+
+[[plugins]]
+repo = 'honza/vim-snippets'
+
+[[plugins]]
+repo = 'scrooloose/nerdtree'
+hook_add = '''
+  autocmd VimEnter * NERDTree | wincmd p
+  let NERDTreeChDirMode = 2
+  let NERDTreeIgnore=['\~$', '\.git', '.jpg', '.png', '.gif', 'node_modules$', 'bower_components$']
+  let g:nerdtree_tabs_open_on_gui_startup = 0
+  let NERDTreeWinSize = 30
+  let NERDTreeQuitOnOpen = 1
+'''
+
+[[plugins]]
+repo = 'scrooloose/nerdcommenter'
+hook_add = '''
+  let NERDSpaceDelims = 1
+'''
+
+[[plugins]]
+repo = 'jistr/vim-nerdtree-tabs'
+
+[[plugins]]
+repo = 'heartsentwined/vim-emblem'
+
+[[plugins]]
+repo = 'jiangmiao/auto-pairs'
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+hook_add = '''
+  vmap <Leader>a <Plug>(EasyAlign)
+  nmap <Leader>a <Plug>(EasyAlign)
+  if !exists('g:easy_align_delimeters')
+    let g:easy_align_delimeters = {}
+  endif
+  let g:easy_align_delimeters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
+'''
+
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
+merged = 0
+
+[[plugins]]
+repo = 'bling/vim-airline'
+hook_add = '''
+  set laststatus=2
+  let g:airline_powerline_fonts = 1
+  let g:airline_theme='molokai'
+  if has('cmdline_info')
+    set ruler                   " show the ruler
+    set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
+    set showcmd                 " show partial commands in status line and
+  endif
+  set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
+'''
+merged = 0
+
+[[plugins]]
+if = "has('vim')"
+repo = 'eparreno/vim-l9'
+
+[[plugins]]
+if = "has('vim')"
+repo = 'othree/vim-autocomplpop'

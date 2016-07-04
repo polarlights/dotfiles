@@ -1,1 +1,1 @@
-/Users/huyang/.vimrc
+execute 'source' fnamemodify(expand('<sfile>'), ':h').'/config/vimrc'
